@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.mode.js";
+import User from "../models/user.model.js";
 
 // this middleware is used to check if the user is logged in or not then only updation is allowed
 export const protectRoute = async (req, res, next) => {
