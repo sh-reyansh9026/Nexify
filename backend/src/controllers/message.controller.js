@@ -30,3 +30,36 @@ export const getMessages= async (req,res) => {
         
      }
 }
+
+// this below controller is used to send messages
+export const sendMessage = async (req, res) => {
+    try {
+        const { text, image } = req.body; // getting text or image or both from req.body
+        const { id: receiverId } = req.params; // getting receiverId from req.params
+        const senderId = req.user._id; // getting senderId from req.user._id
+        let imageUrl;
+        // if image is there then it will upload the image to cloudinary
+        if (image) {
+            const uploadResponse = await cloudinary.uploader.upload(image);
+            imageUrl = uploadResponse.secure_url;
+        }
+
+         // creating new message with senderId, receiverId, text and image
+        const newMessage = new Message({
+            senderId,
+            receiverId,
+            text,
+            image: imageUrl
+        });
+
+        await newMessage.save(); // saving the message to database
+
+        // TODO: realtime functionality goes here => socket.io
+
+        res.status(200).json(newMessage); // showing the message on frontend
+    } catch (error) {
+        console.log("Error in sendMessage controller", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+        
+    }
+}
