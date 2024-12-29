@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/utils.js";
-
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async(req, res) => {
     const { email, password, fullName } = req.body; // taking inputs from frontend
@@ -98,5 +98,33 @@ export const logout = (req, res) => {
 };
 
 export const updateProfile = async (req, res) => { 
-    
+    try {
+        const { profilePic } = req.body; // taking profilePic from frontend
+
+        if(!profilePic) {
+            return res.status(400).json({ message: "Profile Pic is required" });
+        }
+        // if profile pic is provided then it will find the user with the userId and update the profilePic
+        const userId = req.user._id; // taking userId from req.user and req.user is passed from protectRoute middleware from req.body
+
+        // now file will be uploaded to cloudinary
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+        const updatedUser = await User.findByIdAndUpdate(userId, { profilePic: uploadResponse.secure_url }, { new: true });// new:true makes sure that updated user is returned
+        
+        res.status(200).json(updatedUser);
+
+    } catch (error) {
+        console.log("Error in updateProfile ", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+// it is for checking if user is authenticated or not based on that which page is to be shown on frontend login,signup or logout
+export const checkAuth = (req, res) => {
+    try {
+        res.status(200).json(req.user);
+    } catch (error) {
+        console.log("Error in checkAuth controller", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 }
