@@ -1,6 +1,3 @@
-import React, { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
 
 import HomePage from "./pages/HomePage";
@@ -8,9 +5,12 @@ import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
+import { useEffect } from "react";
+
 import { Loader } from "lucide-react";
-import { Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
@@ -22,13 +22,12 @@ const App = () => {
   console.log({ authUser });
 
   // here checking if isCheckingAuth is true and authUser is false means user is not authenticated and we are checking the authentication so we are showing the loader
-  if (isCheckingAuth && !authUser) {
+  if (isCheckingAuth && !authUser)
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className="size-10 animate-spin" />
       </div>
     );
-  }
 
   return (
     <div>

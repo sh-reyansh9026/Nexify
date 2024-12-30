@@ -18,20 +18,20 @@ export const useAuthStore = create((set) => ({
 
     isCheckingAuth: true,// loading state checking if user is authenticated or not
     // we are using a function to set the state
+
     checkAuth: async () => {
-        try {
-            const res = await axiosInstance.get("/auth/check");
+    try {
+      const res = await axiosInstance.get("/auth/check");
 
-            set({ authUser: res.data });
-
-        } catch (error) {
-            console.log("Error in checkAuth:", error);
-            set({ authUser: null });
-            
-        } finally {
-            set({ isCheckingAuth: false }); 
-        }
-    },
+      set({ authUser: res.data });
+      
+    } catch (error) {
+      console.log("Error in checkAuth:", error);
+      set({ authUser: null });
+    } finally {
+      set({ isCheckingAuth: false });
+    }
+  },
 
     // The function is async because it performs an API call (await axiosInstance.post(...)) which is asynchronous.
     // It uses axiosInstance to send a POST request to the backend for user signup.
@@ -51,6 +51,31 @@ export const useAuthStore = create((set) => ({
         } finally {
             set({ isSigningUp: false });
         }
-    }
+  },
+    
+    login: async (data) => {
+      set({ isLoggingIn: true });
+      try {
+        const res = await axiosInstance.post("/auth/login", data);
+        set({ authUser: res.data });
+        toast.success("Logged in successfully");
+      } catch (error) {
+        toast.error(error.response.data.message);
+      } finally {
+        set({ isLoggingIn: false });
+      }
+    },
+
+    logout: async () => {
+        try {
+            await axiosInstance.post("/auth/logout");
+            set({ authUser: null });
+            toast.success("Logged out successfully");
+        } catch (error) {
+            toast.error(error.response.data.message);
+        }
+  },
+    
+  
 
 }));
