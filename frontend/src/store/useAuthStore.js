@@ -6,6 +6,7 @@
 
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
+import toast from "react-hot-toast";
 
 
 export const useAuthStore = create((set) => ({
@@ -19,7 +20,7 @@ export const useAuthStore = create((set) => ({
     // we are using a function to set the state
     checkAuth: async () => {
         try {
-            const res = await axiosInstance.get("auth/check");
+            const res = await axiosInstance.get("/auth/check");
 
             set({ authUser: res.data });
 
@@ -29,6 +30,26 @@ export const useAuthStore = create((set) => ({
             
         } finally {
             set({ isCheckingAuth: false }); 
+        }
+    },
+
+    // The function is async because it performs an API call (await axiosInstance.post(...)) which is asynchronous.
+    // It uses axiosInstance to send a POST request to the backend for user signup.
+    // It manages UI states (e.g., isSigningUp) and provides feedback using toast notifications.
+    signup: async (data) => {
+        set({ isSigningUp: true });//This sets a state variable isSigningUp to true, likely used to show a loading indicator while the signup process is happening.
+          // set is a function (likely from Zustand or similar state management library) to update the state.
+        try {
+            const res = await axiosInstance.post("/auth/signup", data); // Sends a POST request to the /auth/signup endpoint on your server.
+            //data is the user-provided signup data (e.g., username, email, password).
+            //The server processes the request and returns a response (res).
+            set({ authUser: res.data });//Updates the state to store the authenticated user's details from the server response (res.data).
+            toast.success("Account created successfully");
+            
+        } catch (error) {
+            toast.error(error.response.data.message);
+        } finally {
+            set({ isSigningUp: false });
         }
     }
 
