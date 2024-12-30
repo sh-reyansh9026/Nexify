@@ -13,7 +13,8 @@ const app = express();
 
 const PORT = process.env.PORT;
 
-app.use(express.json()); // it is used to parse the incoming request with JSON payloads to extract from req.body
+app.use(express.json({ limit: '5mb' })); // it is used to parse the incoming request with JSON payloads to extract from req.body 
+// here we are setting the limit to 5mb so that we can upload images of size upto 5mb bcoz By default, Express sets a limit of 100KB for incoming JSON payloads. If your image is larger than this, it will trigger the error.
 app.use(cookieParser());// it is used to parse the cookies
 
 app.use(cors({ // it is used to enable CORS with various options
