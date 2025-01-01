@@ -17,8 +17,10 @@ export const useAuthStore = create((set) => ({
     isUpdatingProfile: false,// initially user is not updating profile so we set it to false    
 
     isCheckingAuth: true,// loading state checking if user is authenticated or not
-    // we are using a function to set the state
-
+  // we are using a function to set the state
+    
+  onlineUsers: [],// initially no user is online so we set it to empty array
+    
     checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
