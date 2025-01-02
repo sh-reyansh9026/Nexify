@@ -15,12 +15,15 @@ import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore(); // calling useThemeStore to initialize the theme
+
+  console.log({ onlineUsers });
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
   console.log({ authUser });
 
   // here checking if isCheckingAuth is true and authUser is false means user is not authenticated and we are checking the authentication so we are showing the loader
@@ -33,7 +36,6 @@ const App = () => {
 
   return (
     <div data-theme={theme}>
-      {" "}
       {/* setting the theme */}
       <Navbar />
       <Routes>

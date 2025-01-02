@@ -7,9 +7,10 @@ import { connectDB } from "./lib/db.js";
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import { app, server } from "./lib/socket.js";
 
 dotenv.config();
-const app = express();
+// const app = express(); // it is deleted bcoz it is already created in socket.js file which is imported here
 
 const PORT = process.env.PORT;
 
@@ -26,7 +27,7 @@ app.use(cors({ // it is used to enable CORS with various options
 app.use("/api/auth", authRoutes); // it is used for routing to authRoutes where authRoutes is a function imported from auth.route.js
 app.use("/api/messages", messageRoutes); // it is used for routing to messageRoutes where messageRoutes is a function imported from message.route.js
 
-app.listen(PORT, () => {
+server.listen(PORT, () => { // here instead of app.listen we are using server.listen bcoz we are using socket.io
     console.log("Server is running on PORT:" + PORT);
     connectDB();// databse connection
 });

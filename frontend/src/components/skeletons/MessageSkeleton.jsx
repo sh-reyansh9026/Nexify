@@ -1,6 +1,6 @@
 const MessageSkeleton = () => {
   // Create an array of 6 items for skeleton messages
-  const skeletonMessages = Array(6).fill(null); // each entry represents a chat message
+  const skeletonMessages = Array(6).fill(null);
 
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -11,7 +11,7 @@ const MessageSkeleton = () => {
         ) => (
           <div
             key={idx}
-            className={`chat ${idx % 2 === 0 ? "chat-start" : "chat-end"}`} // alternate between chat-start and chat-end classes to align the chat messages to the left and right
+            className={`chat ${idx % 2 === 0 ? "chat-start" : "chat-end"}`} // alternate between chat-start and chat-end classes
           >
             <div className="chat-image avatar">
               <div className="size-10 rounded-full">

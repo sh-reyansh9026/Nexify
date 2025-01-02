@@ -1,11 +1,11 @@
-import React from "react";
 import { useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
+import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 const MessageInput = () => {
-  const [text, setText] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null); // to show preview of the image in chat just before sending or just after selecting image from your machine
+  const [text, setText] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
@@ -46,11 +46,9 @@ const MessageInput = () => {
       // Clear form : after sending message text is set to null and image preview is removed
       setText("");
       setImagePreview(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
-      console.error("Failed to send message", error);
+      console.error("Failed to send message:", error);
     }
   };
 
@@ -103,7 +101,7 @@ const MessageInput = () => {
                      ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
             onClick={() => fileInputRef.current?.click()} // when this button is clicked then hidden input field is clicked to select image
           >
-            <Image size={20} />{" "}
+            <Image size={20} />
             {/* Image icon for selecting image from machine */}
           </button>
         </div>

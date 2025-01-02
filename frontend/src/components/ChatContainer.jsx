@@ -1,6 +1,5 @@
-import React from "react";
 import { useChatStore } from "../store/useChatStore";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -10,13 +9,37 @@ import { formatMessageTime } from "../lib/utils";
 
 // Chat Container has three parts - Header -> where user is shown , Messages-> where chats are shown, and MessageInput-> where user can type messages
 const ChatContainer = () => {
-  const { selectedUser, isMessagesLoading, getMessages, messages } =
-    useChatStore();
+  const {
+    messages,
+    getMessages,
+    isMessagesLoading,
+    selectedUser,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  } = useChatStore();
   const { authUser } = useAuthStore();
+  const messageEndRef = useRef(null); // to scroll to the bottom of the chat when new message is sent or received immediately automatically
 
   useEffect(() => {
+    // useEffect is used to get messages between two users and subscribe to messages
     getMessages(selectedUser._id);
-  }, [selectedUser._id, getMessages]);
+
+    subscribeToMessages(); // subscribe to messages between two users means to show chats between two users in real time
+
+    return () => unsubscribeFromMessages(); // unsubscribe from messages between two users when we are not chatting with anyone or we are not on the chat page or we are on some other page or we are logging out
+  }, [
+    selectedUser._id,
+    getMessages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
+
+  // to scroll to the bottom of the chat when new message is sent or received immediately automatically
+  useEffect(() => {
+    if (messageEndRef.current && messages) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   if (isMessagesLoading) {
     return (
@@ -39,8 +62,9 @@ const ChatContainer = () => {
             className={`chat ${
               message.senderId === authUser._id ? "chat-end" : "chat-start"
             }`}
+            ref={messageEndRef}
           >
-            <div className="chat-image avatar">
+            <div className=" chat-image avatar">
               <div className="size-10 rounded-full border">
                 <img
                   src={
@@ -61,7 +85,7 @@ const ChatContainer = () => {
               {message.image && (
                 <img
                   src={message.image}
-                  alt="Attachement"
+                  alt="Attachment"
                   className="sm:max-w-[200px] rounded-md mb-2"
                 />
               )}
@@ -75,5 +99,4 @@ const ChatContainer = () => {
     </div>
   );
 };
-
 export default ChatContainer;

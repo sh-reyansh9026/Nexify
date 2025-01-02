@@ -9,7 +9,7 @@ const Sidebar = () => {
     useChatStore();
 
   const { onlineUsers } = useAuthStore();
-  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const [showOnlineOnly, setShowOnlineOnly] = useState(false); // to show online users only initially it is unchecked or false means initially all users are shown
 
   useEffect(() => {
     getUsers();
@@ -17,12 +17,10 @@ const Sidebar = () => {
 
   const filteredUsers = showOnlineOnly
     ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+    : users; // if showOnlineOnly is true then show only online users else show all users
 
-  if (isUsersLoading) {
-    // If users are loading then show the skeleton
-    return <SidebarSkeleton />;
-  }
+  if (isUsersLoading) return <SidebarSkeleton />; // If users are loading then show the skeleton
+
   // If users are not loading then show the users
   return (
     <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
@@ -86,7 +84,7 @@ const Sidebar = () => {
             </div>
           </button>
         ))}
-
+        {/*if there are no users to show then show this message*/}
         {filteredUsers.length === 0 && (
           <div className="text-center text-zinc-500 py-4">No online users</div>
         )}
