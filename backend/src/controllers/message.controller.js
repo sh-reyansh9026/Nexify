@@ -51,7 +51,7 @@ export const sendMessage = async (req, res) => {
 
          // creating new message with senderId, receiverId, text and image
         const newMessage = new Message({
-      senderId,
+        senderId,
       receiverId,
       text,
       image: imageUrl,
@@ -69,6 +69,57 @@ export const sendMessage = async (req, res) => {
     } catch (error) {
         console.log("Error in sendMessage controller", error.message);
         res.status(500).json({ error: "Internal Server Error" });
+        
+    }
+}
+
+// this below controller is used to delete message
+export const deleteForMe = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const userId = req.user._id; // Authenticated user's ID
+
+    if (!messageId) {
+      return res.status(400).json({ message: "Invalid message ID" });
+    }
+
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Add userId to deletedBy array if not already present
+    if (!message.deletedBy.includes(userId)) {
+      message.deletedBy.push(userId);
+      await message.save();
+    }
+
+    res.status(200).json({ success: true, message: "Message deleted for you" });
+  } catch (error) {
+    console.error("Error in deleteForMe controller", error.message);
+    res.status(500).json({ error: "Failed to delete message for user" });
+  }
+};
+
+
+
+
+// this below controller is used to delete message for everyone
+export const deleteMessageForEveryone = async (req, res) => { 
+    const { messageId } = req.params; // getting messageId from req.params
+    try {
+        const message = await Message.findById(messageId); // finding message by messageId
+        if (!message) {
+            return res.status(404).json({ error: "Message not found" }); // if message not found then showing error
+        }
+        // await Message.findByIdAndUpdate(messageId); // deleting message by messageId
+        message.isDeletedForEveryone = true; // setting isDeletedForEveryone to true
+        await message.save(); // saving the message to database
+        res.status(200).json({success:true, message: "Message deleted for everyone" });
+    } catch (error) {
+        console.log("Error in deleteMessageForEveryone controller", error.message);
+        res.status(500).json({ error: "Failed to delete message for everyone" });
         
     }
 }

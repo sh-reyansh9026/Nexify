@@ -5,9 +5,9 @@ import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
     // initial state of the store
-    messages: [],
+  messages: [],
   users: [],
-  selectedUser: null,
+  selectedUser: null, 
   isUsersLoading: false,
   isMessagesLoading: false,
 
@@ -76,4 +76,39 @@ export const useChatStore = create((set, get) => ({
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
+
+  deleteForMe: async (messageId) => {
+  try {
+    await axiosInstance.put(`/messages/deleteForMe/${messageId}`);
+    set((state) => ({
+      messages: state.messages.map((msg) => // state.messages gives the state of all existing state of messags
+        msg._id === messageId // if both are not equal then msg is shown as it is without modification
+          ? { ...msg, deletedBy: [...msg.deletedBy, useAuthStore.getState().authUser._id] } // otherwise ...msg-> spreads all existing properties of current message and copy them into new object
+          : msg
+        // deletedBy:[...] updates existing field of matched message
+        // msg.deletedBy -> this is existing array of user IDs who have deleted message
+        // ...msg.deletedBy -> spreads the existing user IDs into a new array 
+        // useAuthStore.getState().authUser._id: Gets the current user's ID from the authentication store.
+        // [...msg.deletedBy, useAuthStore.getState().authUser._id]: Adds the current user's ID to the deletedBy array.
+      ),
+    }));
+
+    toast.success("Message deleted for you");
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Failed to delete message");
+  }
+},
+
+
+  deleteForEveryone: async (messageId) => {
+    try {
+      await axiosInstance.put(`/messages/deleteForEveryone/${messageId}`);
+      // set({
+      //   messages: getMessages(selectedUser._id).filter((msg) => msg._id !== messageId),
+      // });
+      toast.success("Message deleted for everyone");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
 }));

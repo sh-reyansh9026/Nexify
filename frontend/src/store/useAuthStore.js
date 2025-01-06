@@ -99,6 +99,8 @@ export const useAuthStore = create((set, get) => ({
       set({ isUpdatingProfile: false });
     }
   },
+
+  
     
   connectSocket: () => {
     const { authUser } = get(); // Get the current state or current authenticated users

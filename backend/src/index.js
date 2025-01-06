@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js";
 
+
 dotenv.config();
 // const app = express(); // it is deleted bcoz it is already created in socket.js file which is imported here
 
