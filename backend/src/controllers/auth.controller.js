@@ -127,3 +127,23 @@ export const checkAuth = (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const deleteAccount = async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const user = await User.findById(userId);
+        if (!user) { 
+            return res.status(404).json({ error: "User not found" });
+        }
+        // Delete all messages associated with the user
+        // await Message.deleteMany({ userId });
+        // Delete the user
+        await User.findByIdAndDelete(userId);
+        res.status(200).json({ success: true, message: "Account deleted successfully" });
+
+    } catch (error) {
+        console.log("Error in deleteAccount controller", error);
+        res.status(500).json({ error: "Failed to delete account" });
+        
+    }
+}

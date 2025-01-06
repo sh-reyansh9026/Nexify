@@ -99,8 +99,6 @@ export const useAuthStore = create((set, get) => ({
       set({ isUpdatingProfile: false });
     }
   },
-
-  
     
   connectSocket: () => {
     const { authUser } = get(); // Get the current state or current authenticated users
@@ -127,6 +125,20 @@ export const useAuthStore = create((set, get) => ({
   disconnectSocket: () => { 
     if (get().socket?.connected) get().socket.disconnect(); // If the socket is connected then we disconnect the socket on logout as it is called in logout function
        // Disconnect from the WebSocket server
+  },
+
+  deleteAccount: async (userId) => {
+    try {
+      await axiosInstance.delete(`/auth/deleteAccount/${userId}`);             
+      toast.success("Account deleted successfully");
+      set({ authUser: null });
+
+    } catch (error) {
+      console.log("error in deleteAccount:", error);
+      toast.error(error.response.data.message);
+    }
   }
 
 }));
+
+

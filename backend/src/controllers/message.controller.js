@@ -102,11 +102,8 @@ export const deleteForMe = async (req, res) => {
   }
 };
 
-
-
-
 // this below controller is used to delete message for everyone
-export const deleteMessageForEveryone = async (req, res) => { 
+export const deleteMessageForEveryone = async (req, res) => {
     const { messageId } = req.params; // getting messageId from req.params
     try {
         const message = await Message.findById(messageId); // finding message by messageId
@@ -116,10 +113,11 @@ export const deleteMessageForEveryone = async (req, res) => {
         // await Message.findByIdAndUpdate(messageId); // deleting message by messageId
         message.isDeletedForEveryone = true; // setting isDeletedForEveryone to true
         await message.save(); // saving the message to database
-        res.status(200).json({success:true, message: "Message deleted for everyone" });
+        res.status(200).json({ success: true, message: "Message deleted for everyone" });
     } catch (error) {
         console.log("Error in deleteMessageForEveryone controller", error.message);
         res.status(500).json({ error: "Failed to delete message for everyone" });
         
     }
-}
+};
+
