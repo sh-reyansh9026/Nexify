@@ -122,24 +122,3 @@ export const deleteMessageForEveryone = async (req, res) => {
     }
 };
 
-export const fileUpload = async (req, res) => {
-  try {
-    const chatId = req.params.chatId;
-    const file = req.file;
-    const cloudinaryUrl = await uploadToCloudinary(file.path);
-  
-    const message = {
-      chatId,
-      content: cloudinaryUrl,
-      contentType: file.mimetype,
-    }
-    await message.save();
-
-    io.emit('message', message);
-
-    res.status(201).json(message);
-  } catch (error) {
-    console.log("Error in file uplaod controller: ", error.message);
-    res.status(500).json({ error: "Internal server error" });
-  }
-}

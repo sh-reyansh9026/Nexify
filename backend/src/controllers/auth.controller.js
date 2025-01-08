@@ -1,6 +1,7 @@
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "../lib/cloudinary.js";
 
 
 export const signup = async(req, res) => {
@@ -97,14 +98,16 @@ export const logout = (req, res) => {
 };
 
 export const updateProfile = async (req, res) => { 
+    const { profilePic } = req.body; // taking profilePic from frontend
+    const userId = req.user?._id; // taking userId from req.user and req.user is passed from protectRoute middleware from req.body
     try {
-        const { profilePic } = req.body; // taking profilePic from frontend
-
+        console.log("Received userId:", userId);
+        //console.log("Received profilePic:", profilePic);
         if(!profilePic) {
             return res.status(400).json({ message: "Profile Pic is required" });
         }
         // if profile pic is provided then it will find the user with the userId and update the profilePic
-        const userId = req.user._id; // taking userId from req.user and req.user is passed from protectRoute middleware from req.body
+        
 
         // now file will be uploaded to cloudinary
         const uploadResponse = await cloudinary.uploader.upload(profilePic);

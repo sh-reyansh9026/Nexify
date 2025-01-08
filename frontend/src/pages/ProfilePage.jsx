@@ -4,11 +4,11 @@ import { Camera, Mail, User } from "lucide-react";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
-
-  const [selectedImg, setSelectedImg] = useState(null);
+  const [selectedImg, setSelectedImg] = useState();
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]; // extracting the iamge file the event object
+
     if (!file) return; // if no file is selected then return
 
     // if file is selected then we will read the file and convert it to base64 image
@@ -20,6 +20,7 @@ const ProfilePage = () => {
       // onload event is triggered when the file is read
       const base64Image = reader.result; // reader.result contains the base64 image
       setSelectedImg(base64Image); // set the base64 image to the state variable selectedImg
+
       await updateProfile({ profilePic: base64Image }); // call the updateProfile function from useAuthStore.js and pass the base64 image as an argument
     };
   };
@@ -29,10 +30,12 @@ const ProfilePage = () => {
       <div className="max-w-2xl mx-auto p-4 py-8">
         <div className="bg-base-300 rounded-xl p-6 space-y-8">
           <div className="text-center">
-            <h1 className="text-2xl font-semibold">Profile</h1>
+            <h1 className="text-2xl font-semibold ">Profile</h1>
             <p className="mt-2">Your profile information</p>
           </div>
-          {/*avatar upload section*/}
+
+          {/* avatar upload section */}
+
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <img
@@ -70,7 +73,6 @@ const ProfilePage = () => {
             </p>
           </div>
 
-          {/*profile information section*/}
           <div className="space-y-6">
             <div className="space-y-1.5">
               <div className="text-sm text-zinc-400 flex items-center gap-2">
