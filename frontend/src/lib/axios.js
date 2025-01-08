@@ -9,6 +9,6 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-    baseURL: "http://localhost:5001/api/", // port on which the backend is running
+    baseURL: import.meta.env.MODE === "development" ? "http://localhost:5001/api/" : "/api", // port on which the backend is running
     withCredentials: true, // to send cookies along with the request
 });
