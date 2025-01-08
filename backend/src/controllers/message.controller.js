@@ -38,40 +38,39 @@ export const getMessages= async (req,res) => {
 
 // this below controller is used to send messages
 export const sendMessage = async (req, res) => {
-    try {
-        const { text, image } = req.body; // getting text or image or both from req.body
-        const { id: receiverId } = req.params; // getting receiverId from req.params
-        const senderId = req.user._id; // getting senderId from req.user._id
-        let imageUrl;
-        // if image is there then it will upload the image to cloudinary
-        if (image) {
-            const uploadResponse = await cloudinary.uploader.upload(image);
-            imageUrl = uploadResponse.secure_url;
-        }
+  try {
+    const { text, image } = req.body;
+    const { id: receiverId } = req.params;
+    const senderId = req.user._id;
 
-         // creating new message with senderId, receiverId, text and image
-        const newMessage = new Message({
-        senderId,
+    let imageUrl;
+    if (image) {
+      // Upload base64 image to cloudinary
+      const uploadResponse = await cloudinary.uploader.upload(image);
+      imageUrl = uploadResponse.secure_url;
+    }
+
+    const newMessage = new Message({
+      senderId,
       receiverId,
       text,
       image: imageUrl,
     });
 
-    await newMessage.save(); // saving the message to database
+    await newMessage.save();
 
-        //  realtime functionality goes here => socket.io
-        const receiverSocketId = getReceiverSocketId(receiverId); // getting receiver socketId
-        if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", newMessage); // emitting newMessage event to receiver only by using receiverSocketId in "to" method
-        }
-
-        res.status(201).json(newMessage); // showing the message on frontend
-    } catch (error) {
-        console.log("Error in sendMessage controller", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
-        
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
     }
-}
+
+    res.status(201).json(newMessage);
+  } catch (error) {
+    console.log("Error in sendMessage controller: ", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
 // this below controller is used to delete message
 export const deleteForMe = async (req, res) => {
@@ -104,7 +103,7 @@ export const deleteForMe = async (req, res) => {
 
 // this below controller is used to delete message for everyone
 export const deleteMessageForEveryone = async (req, res) => {
-    const { messageId } = req.params; // getting messageId from req.params
+  const { messageId } = req.params; // getting messageId from req.params
     try {
         const message = await Message.findById(messageId); // finding message by messageId
         if (!message) {
@@ -112,7 +111,9 @@ export const deleteMessageForEveryone = async (req, res) => {
         }
         // await Message.findByIdAndUpdate(messageId); // deleting message by messageId
         message.isDeletedForEveryone = true; // setting isDeletedForEveryone to true
-        await message.save(); // saving the message to database
+      await message.save(); // saving the message to database
+      io.emit("deleteMessageForEveryone", { messageId });
+      
         res.status(200).json({ success: true, message: "Message deleted for everyone" });
     } catch (error) {
         console.log("Error in deleteMessageForEveryone controller", error.message);
@@ -121,3 +122,24 @@ export const deleteMessageForEveryone = async (req, res) => {
     }
 };
 
+export const fileUpload = async (req, res) => {
+  try {
+    const chatId = req.params.chatId;
+    const file = req.file;
+    const cloudinaryUrl = await uploadToCloudinary(file.path);
+  
+    const message = {
+      chatId,
+      content: cloudinaryUrl,
+      contentType: file.mimetype,
+    }
+    await message.save();
+
+    io.emit('message', message);
+
+    res.status(201).json(message);
+  } catch (error) {
+    console.log("Error in file uplaod controller: ", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}

@@ -49,7 +49,7 @@ export const useChatStore = create((set, get) => ({
             toast.error(error.response.data.message);
             
         }
-    },
+  },
 
     // this function is used to get the new message from the server and add it to the existing messages
     subscribeToMessages: () => {
@@ -66,7 +66,13 @@ export const useChatStore = create((set, get) => ({
         messages: [...get().messages, newMessage],
       }); // add the new message at the end to the existing messages (...messages)
           
-        });
+    })
+      socket.on("deleteMessageForEveryone", ({ messageId }) => {
+    set((state) => ({
+      messages: state.messages.filter((msg) => msg._id !== messageId),
+    }));
+  });
+      
     },
 
     // this function is used to unsubscribe from the messages when we are not chatting with anyone or we are not on the chat page or we are on some other page or we are logging out
@@ -103,9 +109,11 @@ export const useChatStore = create((set, get) => ({
   deleteForEveryone: async (messageId) => {
     try {
       await axiosInstance.put(`/messages/deleteForEveryone/${messageId}`);
-      // set({
-      //   messages: getMessages(selectedUser._id).filter((msg) => msg._id !== messageId),
-      // });
+      // socket.on("deleteMessageForEveryone", ({ messageId }) => {
+      //   set((state) => ({
+      //     messages: state.messages.filter((msg) => msg._id !== messageId),
+      //   }))
+      // })
       toast.success("Message deleted for everyone");
     } catch (error) {
       toast.error(error.response.data.message);

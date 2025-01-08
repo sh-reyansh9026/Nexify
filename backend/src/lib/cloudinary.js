@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { config } from 'dotenv';
 
+
 config(); // it is important to call this function before using process.env as cloudinary will take api key and api secret from .env file
 
 cloudinary.config({

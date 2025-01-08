@@ -41,6 +41,9 @@ const ChatContainer = () => {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+  // useEffect(() => {
+  //   scrollToTop();
+  // }, [messages]);
 
   if (isMessagesLoading) {
     return (

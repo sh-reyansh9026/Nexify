@@ -24,7 +24,7 @@ app.use(cors({ // it is used to enable CORS with various options
     credentials: true
 })); 
 
-
+app.use("/public/temp",express.static("/public/temp"));
 app.use("/api/auth", authRoutes); // it is used for routing to authRoutes where authRoutes is a function imported from auth.route.js
 app.use("/api/messages", messageRoutes); // it is used for routing to messageRoutes where messageRoutes is a function imported from message.route.js
 

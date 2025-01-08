@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { LogOut, MessageSquare, Settings, User } from "lucide-react";
 
 const Navbar = () => {
-  const { logout, authUser, deleteAccount } = useAuthStore();
+  const { logout, authUser } = useAuthStore();
 
   return (
     <header
@@ -36,27 +36,19 @@ const Navbar = () => {
               <span className="hidden sm:inline">Settings</span>
             </Link>
 
-            {authUser && ( // If the user is authenticated, show the profile and logout buttons.
+            {/* {authUser && ( // If the user is authenticated, show the profile and logout buttons.
               <>
                 <Link to={"/profile"} className={`btn btn-sm gap-2`}>
                   <User className="size-5" />
                   <span className="hidden sm:inline">Profile</span>
-                </Link>
+                </Link> */}
 
-                <button className="flex gap-2 items-center" onClick={logout}>
+            {/* <button className="flex gap-2 items-center" onClick={logout}>
                   <LogOut className="size-5" />
                   <span className="hidden sm:inline">Logout</span>
                 </button>
-
-                <button
-                  className="flex gap-2 items-center"
-                  onClick={() => deleteAccount(authUser._id)}
-                >
-                  <LogOut className="size-5" />
-                  <span className="hidden sm:inline">deleteAccount</span>
-                </button>
               </>
-            )}
+            )} */}
           </div>
         </div>
       </div>

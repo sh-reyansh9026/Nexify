@@ -13,6 +13,7 @@ import { useEffect } from "react";
 
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
+import ThemePage from "./pages/ThemePage";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
@@ -55,6 +56,7 @@ const App = () => {
         />
 
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/themes" element={<ThemePage />} />
 
         <Route
           path="/profile"
